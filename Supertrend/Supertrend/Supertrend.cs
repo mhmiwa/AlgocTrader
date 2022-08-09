@@ -28,7 +28,7 @@ namespace cAlgo
         private Supertrend _supertrend;
         [Parameter("Percentage of Account (%)", Group = "Volume", DefaultValue = 100, MinValue = 1, Step = 1)]
         public double Percentage { get; set; }
-        [Parameter("Label", DefaultValue = "Sample")]
+        [Parameter("Label", DefaultValue = "SupertrendBot")]
         public string Label { get; set; }
         public Position[] BotPositions
         {
@@ -45,13 +45,11 @@ namespace cAlgo
         {
             if (_supertrend.UpTrend.Last(1) < Bars.ClosePrices.Last(1) && _supertrend.DownTrend.Last(2) > Bars.ClosePrices.Last(2))
             {
-                //ClosePositions(TradeType.Sell);
                 ExecuteMarketOrder(TradeType.Buy, SymbolName, VolumeInUnits, Label);
             }
             else if (_supertrend.DownTrend.Last(1) > Bars.ClosePrices.Last(1) && _supertrend.UpTrend.Last(2) < Bars.ClosePrices.Last(2))
             {
                 ClosePositions(TradeType.Buy);
-                //ExecuteMarketOrder(TradeType.Sell, SymbolName, VolumeInUnits, Label);
             }
         }
         private void ClosePositions(TradeType tradeType)

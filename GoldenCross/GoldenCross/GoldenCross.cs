@@ -22,6 +22,9 @@ namespace cAlgo
     [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.None)]
     public class GoldenCross : Robot
     {
+        [Parameter("Label", DefaultValue = "GoldenCrossBot")]
+        public string Label { get; set; }
+    
         [Parameter("Percentage of Account (%)", Group = "Volume", DefaultValue = 100, MinValue = 1, Step = 1)]
         public double Percentage { get; set; }
 
@@ -40,8 +43,7 @@ namespace cAlgo
 
         private MovingAverage slowMa;
         private MovingAverage fastMa;
-        private const string label = "Sample Trend cBot";
-
+        
         protected override void OnStart()
         {
             fastMa = Indicators.MovingAverage(SourceSeries, FastPeriods, MAType);
@@ -50,8 +52,8 @@ namespace cAlgo
 
         protected override void OnBar()
         {
-            var longPosition = Positions.Find(label, SymbolName, TradeType.Buy);
-            var shortPosition = Positions.Find(label, SymbolName, TradeType.Sell);
+            var longPosition = Positions.Find(Label, SymbolName, TradeType.Buy);
+            var shortPosition = Positions.Find(Label, SymbolName, TradeType.Sell);
 
             var currentSlowMa = slowMa.Result.Last(1);
             var currentFastMa = fastMa.Result.Last(1);
@@ -63,14 +65,14 @@ namespace cAlgo
                 if (shortPosition != null)
                     ClosePosition(shortPosition);
 
-                ExecuteMarketOrder(TradeType.Buy, SymbolName, VolumeInUnits, label);
+                ExecuteMarketOrder(TradeType.Buy, SymbolName, VolumeInUnits, Label);
             }
             else if (previousSlowMa < previousFastMa && currentSlowMa >= currentFastMa && shortPosition == null)
             {
                 if (longPosition != null)
                     ClosePosition(longPosition);
 
-               ExecuteMarketOrder(TradeType.Sell, SymbolName, VolumeInUnits, label);
+               ExecuteMarketOrder(TradeType.Sell, SymbolName, VolumeInUnits, Label);
             }
         }
 
